@@ -1,5 +1,6 @@
 test_ignore
 venv
+data
 
 *.pyc
 *__pycache__/
