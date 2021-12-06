@@ -1,6 +1,9 @@
+import functools
+
 from flask import (
     Blueprint, flash, g, redirect, render_template, send_file, request, url_for
 )
+
 
 from anaspingpong.db import get_db
 from flask import current_app
@@ -22,7 +25,8 @@ def writeTablestoXML(tables, output_file):
 
 @bp.route('/')
 def index():
-    return render_template('load/index.html')
+    return render_template('load/index.html',
+                           key=current_app.config['GOOGLE_MAPS_KEY'])
 
 @bp.route('/data')
 def data():
@@ -61,12 +65,8 @@ def predict():
                                                   current_app.config['DATA_XML']))
            # return redirect(url_for('load.index'))
     return render_template('load/index.html',
-                           center_lat=f'{center_lat:.6f}',
-                           center_lon=f'{center_lon:.6f}',
-                           zoom=f'{zoom}')
-
-    # return render_template('load/index.html',
-    #                        center_lat="",
-    #                        center_lon="",
-    #                        zoom="")
+                            key=current_app.config['GOOGLE_MAPS_KEY'],
+                            center_lat=f'{center_lat:.6f}',
+                            center_lon=f'{center_lon:.6f}',
+                            zoom=f'{zoom}')
 
