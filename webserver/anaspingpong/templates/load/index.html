@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ana's Ping Pong</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  </head>
+  <body>
+    <div id="home">
+       <button onclick="goHome()">Go to my current location</button></br>
+       <form action="/predict" method="post">
+         <input type="hidden" id="zoom" name="zoom" value="{{zoom}}">
+         <input type="hidden" id="center_lat" name="center_lat" value="{{center_lat}}">
+         <input type="hidden" id="center_lon" name="center_lon" value="{{center_lon}}">
+       <button id="location" name="location" value="" onclick="fillLocation()">Find tables here</button>
+      </form>
+    </div>
+      
+    <div id="map"></div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+	    src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=initMap&v=weekly"
+      async
+    ></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+  </body>
+</html>
