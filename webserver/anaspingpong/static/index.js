@@ -19,6 +19,37 @@ function setCoordinates() {
 
 }
 
+function showAddress(address)
+{
+	  $.getJSON('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + address, function(data) {
+
+		  var items = [];
+		  var zaehler = 0;
+		  var lat = 0;
+		  var lng = 0;
+
+			$.each(data, function(key, val) {
+
+
+
+			  if (zaehler == 0)
+			  {
+				lat = val.lat;
+			  	lng = val.lon;
+			  	//console.log(lat+","+lng);
+			  	theplace = new google.maps.LatLng(lat,lng);
+				map.setCenter(theplace);
+
+
+								map.setZoom(16);
+
+
+			  }
+			  zaehler++;
+		  });
+	});
+
+}
 
 function placeMarker(location) {
     var image = new google.maps.MarkerImage(

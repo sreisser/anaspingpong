@@ -1,4 +1,3 @@
-import functools
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, send_file, request, url_for
@@ -6,7 +5,9 @@ from flask import (
 
 
 from anaspingpong.db import get_db
+from anaspingpong.prediction import get_tables
 from flask import current_app
+
 import re
 import os
 
@@ -44,18 +45,22 @@ def predict():
         center_lon = float(center[1])
         hash_id = int(center_lat*center_lon*10_000)
 
-    #    predictions = get_tables(center_lat, center_lon)
+        pred_lon, pred_lat = get_tables(center_lat, center_lon)
+        hashes = [int(lat * lon * 10_000) for lat, lon in zip(pred_lat, pred_lon)]
+        print(pred_lon)
+        print(pred_lat)
+        print(hashes)
 
         if error is not None:
             flash(error)
         else:
             db = get_db()
-
-            db.execute(
-                'INSERT OR IGNORE INTO tables (hash, latitude, longitude)'
-                ' VALUES (?, ?, ?)',
-                (hash_id, center_lat, center_lon)
-            )
+            for i in range(len(hashes)):
+                db.execute(
+                    'INSERT OR IGNORE INTO tables (hash, latitude, longitude)'
+                    ' VALUES (?, ?, ?)',
+                    (hashes[i], pred_lat[i], pred_lon[i])
+                )
             db.commit()
             tables = db.execute(
                 'SELECT latitude, longitude '

@@ -14,7 +14,14 @@
          <input type="hidden" id="center_lat" name="center_lat" value="{{center_lat}}">
          <input type="hidden" id="center_lon" name="center_lon" value="{{center_lon}}">
        <button id="location" name="location" value="" onclick="fillLocation()">Find tables here</button>
+
       </form>
+      <form id="search" onsubmit="showAddress(this.address.value); return false" >
+                   <input title="Enter ZIPs, city names, streets ..." class="search"
+                          type="text" name="address" value="Place"
+                          onfocus="if(this.value == 'Place') { this.value = ''; }" />
+        <input  class="button" type="submit" value="Search!" />
+                </form>
     </div>
       
     <div id="map"></div>

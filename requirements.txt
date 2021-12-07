@@ -1,4 +1,8 @@
 flask
 requests
 joblib
-
+Pillow
+tensorflow
+pathlib
+glob2
+numpy
