@@ -1,4 +1,4 @@
-# Public ping pong map
+# Ana's Ping Pong
 
 Data science retreat (https://datascienceretreat.com/) portfolio project.
 
