@@ -6,6 +6,8 @@ data
 *__pycache__/
 
 *instance/
+*temp/
+*.zip
 
 *.pytest_cache/
 *.coverage
