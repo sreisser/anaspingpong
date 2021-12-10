@@ -1,7 +1,10 @@
 flask
 requests
+pandas
 joblib
 Pillow
 tensorflow
 glob2
 numpy
+torch
+torchvision
