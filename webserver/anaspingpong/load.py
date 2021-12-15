@@ -47,9 +47,6 @@ def predict():
 
         pred_lon, pred_lat = get_tables(center_lat, center_lon)
         hashes = [int(lat * lon * 10_000) for lat, lon in zip(pred_lat, pred_lon)]
-        print(pred_lon)
-        print(pred_lat)
-        print(hashes)
 
         if error is not None:
             flash(error)
@@ -69,9 +66,11 @@ def predict():
             writeTablestoXML(tables, os.path.join('anaspingpong',
                                                   current_app.config['DATA_XML']))
            # return redirect(url_for('load.index'))
-    return render_template('load/index.html',
+        return render_template('load/index.html',
                             key=current_app.config['GOOGLE_MAPS_KEY'],
                             center_lat=f'{center_lat:.6f}',
                             center_lon=f'{center_lon:.6f}',
                             zoom=f'{zoom}')
+    return render_template('load/index.html',
+                           key=current_app.config['GOOGLE_MAPS_KEY'])
 

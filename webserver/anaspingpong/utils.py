@@ -179,12 +179,23 @@ class Utils:
             )
 
     def tile2long(x, z):
-        return (x + 0.5) / math.pow(2, z) * 360 - 180
+        return x / math.pow(2, z) * 360 - 180
 
     def tile2lat(y, z):
-        n = math.pi - 2 * math.pi * (y + .5) / math.pow(2, z)
+        n = math.pi - 2 * math.pi * y / math.pow(2, z)
         return 180 / math.pi * math.atan(0.5 * (math.exp(n) - math.exp(-n)))
 
-
+    def measure(lat1, lon1, lat2, lon2):
+        R = 6378.137
+        dLat = lat2 * math.pi / 180 - lat1 * math.pi / 180
+        dLon = lon2 * math.pi / 180 - lon1 * math.pi / 180
+        a = (math.sin(dLat / 2) * math.sin(dLat / 2) +
+             math.cos(lat1 * math.pi / 180) *
+             math.cos(lat2 * math.pi / 180) *
+             math.sin(dLon / 2) * math.sin(dLon / 2)
+             )
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        d = R * c
+        return d * 1000
 
 

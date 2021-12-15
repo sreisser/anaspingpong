@@ -1,63 +1,62 @@
 from anaspingpong.utils import Utils
 import os
-import tensorflow as tf
-from tensorflow.keras import models, layers
+import glob2 as glob
 import numpy as np
+from anaspingpong.predictor import Predictor
+import cv2
+
 
 EXTEND_TILES = 2
 ZOOM = 20
 SOURCE = "http://ecn.t0.tiles.virtualearth.net/tiles/a{quad}.jpeg?g=129&mkt=en&stl=H"
-#source = "https://mt0.google.com/vt?lyrs=h&x={x}&s=&y={y}&z={z}"
-MODEL = tf.keras.models.load_model('../model/checkpoint_Fbeta_entire_model/')
-BATCH_SIZE = 25
-IMAGE_SIZE = (512, 512)
-THRESHOLD = .5
+#SOURCE = "https://mt0.google.com/vt?lyrs=s&x={x}&s=&y={y}&z={z}"
 
-def get_dataset(data_dir):
-    dataset = tf.keras.utils.image_dataset_from_directory(
-        data_dir,
-        labels=None,
-        image_size=IMAGE_SIZE,
-        shuffle=False,
-        batch_size=BATCH_SIZE
-    )
-    return dataset
-
-def encode(images_batch):
-    """ Function to transform images """
-    images_batch = tf.image.convert_image_dtype(images_batch, dtype=tf.float32)
-    return images_batch
-
+#YAML = 'COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml'
 
 def get_tables(latitude, longitude):
+    predictor = Predictor()
+    longitudes = np.empty((0, 1))
+    latitudes = np.empty((0, 1))
+  #  all_scores = np.empty((0, 1))
     # download center tile +- EXTEND_TILES in all directions
     download_folder = download_tables(latitude, longitude)
-    print(download_folder)
 
-    # create tensorflow dataset
-    dataset = get_dataset(download_folder)
-    dataset_encode = dataset.map(lambda dataset: encode(dataset))
+    # create life test data
+    dataset = glob.glob(f'{download_folder}/*')
 
     # predict probabilities
-    label_pred = MODEL.predict(dataset_encode)
+    i_tile = 0
+    for tile in dataset:
+        print(f'Evaluating tile {i_tile} {tile}')
+        i_tile += 1
+        tilename = os.path.basename(tile)
+        img = cv2.imread(tile)
+        label_pred = predictor.predictor(img)
+        scores = label_pred['instances'].scores.numpy()
+        boxes = label_pred['instances'].pred_boxes.tensor.numpy()
+        for i, score in enumerate(scores):
+            print(score)
+            image_height, _, _ = img.shape
+            box_center = np.array([np.mean([boxes[i][0], boxes[i][2]]),
+                          np.mean([boxes[i][1], boxes[i][3]])]) \
+                         / image_height
+            tile_split = tilename.split('_')
+            x = float(tile_split[0]) + box_center[0]
+            y = float(tile_split[1]) + box_center[1]
+            z = int(tile_split[2].replace('.jpeg', ''))
+            long = Utils.tile2long(x, z)
+            lat = Utils.tile2lat(y, z)
+            dist = np.array([Utils.measure(lat, long, ilat, ilong)
+                    for ilat, ilong in zip(latitudes, longitudes)])
 
-    # get images with positive prediction
-    keys_pos = np.where(label_pred > THRESHOLD)[0]
-    if len(keys_pos) == 0:
-        return [], []
-    file_names = np.array(dataset.file_paths)
+            # allow only tables which are more than 2m from the ones already
+            # in the list
+            keys = np.where(dist < 2.)
+            if len(keys[0]) == 0:
+                longitudes = np.append(longitudes, long)
+                latitudes = np.append(latitudes, lat)
 
-    positive_tiles = [os.path.basename(s.replace('.jpeg', '')) for s in file_names[keys_pos]]
-    print(positive_tiles)
-    positive_tiles = np.array([s.split('_') for s in positive_tiles])
-
-    # extract x, y, z from filename and convert to lon, lat
-    xs = positive_tiles[:, 0].astype(int)
-    ys = positive_tiles[:, 1].astype(int)
-    zooms = positive_tiles[:, 2].astype(int)
-    z = zooms[0]
-    longitudes = [Utils.tile2long(x, z) for x in xs]
-    latitudes = [Utils.tile2lat(y, z) for y in ys]
+    print(f'Detected {len(longitudes)} tables')
     return longitudes, latitudes
 
 
@@ -76,4 +75,5 @@ def download_tables(latitude, longitude):
             tempFile = f"{x}_{y}_{ZOOM}" + ".jpeg"
             tempFilePath = os.path.join(tempDirectory, tempFile)
             result = Utils.downloadFile(SOURCE, tempFilePath, x, y, z)
+    print(f'Downloaded tiles to folder {tempDirectory}')
     return tempDirectory
