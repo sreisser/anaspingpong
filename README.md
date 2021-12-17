@@ -13,9 +13,7 @@ Short instructions:
 - activate: `. venv/bin/activate`
 - install requirements: `pip install -r requirements`
 - `pip3 install torch==1.10.0+cpu torchvision==0.11.1+cpu  -f https://download.pytorch.org/whl/cpu/torch_stable.html`
-- `python -m pip install detectron2 -f \
-  https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.10/index.html`
-- (python -m pip install 'git+https://github.com/facebookresearch/detectron2.git')
+- `python -m pip install 'git+https://github.com/facebookresearch/detectron2.git')`
 - `cd webserver`
 - `export FLASK_APP=anaspingpong`
 - `export FLASK_ENV=development`

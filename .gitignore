@@ -1,6 +1,8 @@
 test_ignore
 venv
 data
+*.idea
+*.pem
 
 *.pyc
 *__pycache__/
