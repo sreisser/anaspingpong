@@ -4,14 +4,14 @@ import glob2 as glob
 import numpy as np
 from anaspingpong.predictor import Predictor
 import cv2
-
+import shutil
 
 EXTEND_TILES = 2
 ZOOM = 20
 SOURCE = "http://ecn.t0.tiles.virtualearth.net/tiles/a{quad}.jpeg?g=129&mkt=en&stl=H"
 #SOURCE = "https://mt0.google.com/vt?lyrs=s&x={x}&s=&y={y}&z={z}"
 
-#YAML = 'COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml'
+
 
 def get_tables(latitude, longitude):
     predictor = Predictor()
@@ -55,6 +55,9 @@ def get_tables(latitude, longitude):
             if len(keys[0]) == 0:
                 longitudes = np.append(longitudes, long)
                 latitudes = np.append(latitudes, lat)
+
+    # remove download folder
+    shutil.rmtree(download_folder)
 
     print(f'Detected {len(longitudes)} tables')
     return longitudes, latitudes
