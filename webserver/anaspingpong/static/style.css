@@ -21,6 +21,17 @@ body {
   font-size: medium;
 }
 
+#predicting {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 300px;
+    display: none;
+}
+
 input, button {
     font-size: medium;
 }

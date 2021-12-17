@@ -112,6 +112,7 @@ function goHome() {
 function fillLocation() {
     document.getElementById('location').value = map.getCenter()
     document.getElementById('zoom').value = map.getZoom()
+    document.getElementById('predicting').style.display = 'block'
     document.forms[0].submit()
 }
 
