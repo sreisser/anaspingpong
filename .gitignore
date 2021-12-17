@@ -1,6 +1,5 @@
 test_ignore
 venv
-data
 *.idea
 *.pem
 
