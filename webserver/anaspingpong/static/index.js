@@ -1,6 +1,7 @@
-let map;
+var map;
 
 var data_xml = '/data'
+var pin_file = 'static/images/marker.png'
 var newLat = 52.4907
 var newLng = 13.4726
 var zoom = 18;
@@ -37,12 +38,12 @@ function showAddress(address)
 				lat = val.lat;
 			  	lng = val.lon;
 			  	//console.log(lat+","+lng);
-			  	theplace = new google.maps.LatLng(lat,lng);
-				map.setCenter(theplace);
 
-
-								map.setZoom(16);
-
+			  	newLocation = new Microsoft.Maps.Location(lat, lng);
+			  	map.setView({
+                    center: newLocation,
+                    zoom: zoom
+                 });
 
 			  }
 			  zaehler++;
@@ -51,83 +52,75 @@ function showAddress(address)
 
 }
 
-function placeMarker(location) {
-    var image = new google.maps.MarkerImage(
-        'static/images/marker.png',
-        null, // size
-        null, // origin
-        new google.maps.Point( 8, 8 ), // anchor (move to center of marker)
-        new google.maps.Size( 32, 42 ) // scaled size (required for Retina display icon)
-    );
 
-    var pulseMarker = new google.maps.Marker({
-        flat: true,
-        optimized: false,
-        visible: true,
-        position: location,
-        map: map,
-        icon: image,
-        title: "ping pong table"
-    });
-  }
 
-  
-function initMap() {
-    setCoordinates()
+function GetMap() {
+        setCoordinates()
 
-    map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: newLat, lng: newLng },
-        zoom: zoom,
-        tilt: 0,
-    });
-    map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+        map = new Microsoft.Maps.Map('#map', {
+            credentials: 'AqIKf2KZC7FjrPGfs2eWrDaw2hEj8H3ul8VNA8M6omMTsQ0k0Jha38F6PVtCnBE5',
+            center: new Microsoft.Maps.Location(newLat, newLng),
+            mapTypeId: Microsoft.Maps.MapTypeId.aerial,
+            zoom: zoom,
+        });
 
-    if (home == true) {
-        goHome();
-    }
+      //  var center = map.getCenter();
 
-   getPositions()
-
- // var directionsService = new google.maps.DirectionsService();
- // var directionsRenderer = new google.maps.DirectionsRenderer();
- // directionsRenderer.setMap(map);
-
+       getPositions(map)
+        //Add your post map load code here.
 }
+  
 
 
 function goHome() {
     if(navigator.geolocation) {
         browserSupportFlag = true;
         navigator.geolocation.getCurrentPosition(function(position) {
-           currentLocation = new google.maps.LatLng(
+           currentLocation = new Microsoft.Maps.Location(
                position.coords.latitude,
                position.coords.longitude
             );
-        map.setZoom(18)
-        map.setCenter(currentLocation);
-        });
+
+            map.setView({
+                center: currentLocation,
+                zoom: 18
+            });
+      });
+
     }
 }
 
+
 function fillLocation() {
-    document.getElementById('location').value = map.getCenter()
-    document.getElementById('zoom').value = map.getZoom()
+
+    lat = map.getCenter().latitude
+    lon = map.getCenter().longitude
+    zoom = map.getZoom()
+
+    document.getElementById('center_lat').value = lat
+    document.getElementById('center_lon').value = lon
+    document.getElementById('zoom').value = zoom
     document.getElementById('predicting').style.display = 'block'
     document.forms[0].submit()
 }
 
-function getPositions() {
-    markerArray = new Array();
+function getPositions(map) {
+   // markerArray = new Array();
+
     var jqxhr = $.get(data_xml, function(data) {
 
           $(data).find("marker").each(function() {
             var marker = jQuery(this);
             var id = marker.attr("id");
-            var point = new google.maps.LatLng(parseFloat(marker.attr("lat")),
-                                        parseFloat(marker.attr("lng")));
+            loc = new Microsoft.Maps.Location(marker.attr('lat'),
+            marker.attr('lng'))
 
+            var point = new Microsoft.Maps.Pushpin(loc, {
+                icon: pin_file,
+                anchor: new Microsoft.Maps.Point(8, 8),
+            });
 
-            markerArray.push(placeMarker(point));
+            map.entities.push(point);
 
           });
     });

@@ -37,12 +37,10 @@ def data():
 @bp.route('/predict', methods=('GET', 'POST'))
 def predict():
     if request.method == 'POST':
-        center = request.form['location']
         zoom = int(request.form['zoom'])
-        center = re.sub('[(),]', "", center).split()
         error = None
-        center_lat = float(center[0])
-        center_lon = float(center[1])
+        center_lat = float(request.form['center_lat'])
+        center_lon = float(request.form['center_lon'])
         hash_id = int(center_lat*center_lon*10_000)
 
         pred_lon, pred_lat = get_tables(center_lat, center_lon)
