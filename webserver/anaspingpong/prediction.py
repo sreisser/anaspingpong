@@ -21,6 +21,7 @@ def get_tables(latitude, longitude):
     predictor = Predictor()
     longitudes = np.empty((0, 1))
     latitudes = np.empty((0, 1))
+
     # create folder to store all positive predicted
     dir_predicted = "data/predicted"
     Path(dir_predicted).mkdir(exist_ok=True)
@@ -35,28 +36,20 @@ def get_tables(latitude, longitude):
     # predict probabilities
     i_tile = 0
     for tile in dataset:
-<<<<<<< HEAD
-=======
-        print(f"Evaluating tile {i_tile} {tile}")
->>>>>>> 64b59c0f24fa247beffc885754ab41eae479c528
         i_tile += 1
         print(f'tile {i_tile}')
         tilename = os.path.basename(tile)
         img = cv2.imread(tile)
         label_pred = predictor.predictor(img)
-<<<<<<< HEAD
         scores = label_pred['instances'].scores.numpy()
         boxes = label_pred['instances'].pred_boxes.tensor.numpy()
 
         if len(scores) > 0:
             shutil.copyfile(tile, os.path.join(dir_predicted, tilename))
-=======
-        scores = label_pred["instances"].scores.numpy()
-        boxes = label_pred["instances"].pred_boxes.tensor.numpy()
->>>>>>> 64b59c0f24fa247beffc885754ab41eae479c528
+
         for i, score in enumerate(scores):
             image_height, _, _ = img.shape
-<<<<<<< HEAD
+
             box_center = np.array([np.mean([boxes[i][0], boxes[i][2]]),
                                    np.mean([boxes[i][1], boxes[i][3]])]) \
                          / image_height
@@ -73,29 +66,7 @@ def get_tables(latitude, longitude):
             lat = Utils.tile2lat(y, z)
             dist = np.array([Utils.measure(lat, long, ilat, ilong)
                              for ilat, ilong in zip(latitudes, longitudes)])
-=======
-            box_center = (
-                np.array(
-                    [
-                        np.mean([boxes[i][0], boxes[i][2]]),
-                        np.mean([boxes[i][1], boxes[i][3]]),
-                    ]
-                )
-                / image_height
-            )
-            tile_split = tilename.split("_")
-            x = float(tile_split[0]) + box_center[0]
-            y = float(tile_split[1]) + box_center[1]
-            z = int(tile_split[2].replace(".jpeg", ""))
-            long = Utils.tile2long(x, z)
-            lat = Utils.tile2lat(y, z)
-            dist = np.array(
-                [
-                    Utils.measure(lat, long, ilat, ilong)
-                    for ilat, ilong in zip(latitudes, longitudes)
-                ]
-            )
->>>>>>> 64b59c0f24fa247beffc885754ab41eae479c528
+
 
             # allow only tables which are more than 2m from the ones already
             # in the list
@@ -105,15 +76,13 @@ def get_tables(latitude, longitude):
                 latitudes = np.append(latitudes, lat)
 
     # remove download folder
-    shutil.rmtree(download_folder)
+ #   shutil.rmtree(download_folder)
 
-<<<<<<< HEAD
+
     print(f'Detected {len(longitudes)} tables')
     time_delta = datetime.now() - start
     print(f'Time spent for prediction: {time_delta}')
-=======
-    print(f"Detected {len(longitudes)} tables")
->>>>>>> 64b59c0f24fa247beffc885754ab41eae479c528
+
     return longitudes, latitudes
 
 
@@ -124,13 +93,11 @@ def download_tables(latitude, longitude, shift=True):
 
     tempDirectory = os.path.join("temp", f"tmp{Utils.randomString()}")
     os.makedirs(tempDirectory)
-<<<<<<< HEAD
+
     images_array = []
     for i in range(-EXTEND_TILES, EXTEND_TILES + 1):
         images_row = []
-=======
-    for i in range(-EXTEND_TILES, EXTEND_TILES + 1):
->>>>>>> 64b59c0f24fa247beffc885754ab41eae479c528
+
         for j in range(-EXTEND_TILES, EXTEND_TILES + 1):
             # take n tiles left and right, up and down of center tile
             x = center_x + i
@@ -138,7 +105,7 @@ def download_tables(latitude, longitude, shift=True):
             tempFile = f"{x}_{y}_{ZOOM}" + ".jpeg"
             tempFilePath = os.path.join(tempDirectory, tempFile)
             result = Utils.downloadFile(SOURCE, tempFilePath, x, y, z)
-<<<<<<< HEAD
+
             if shift:
                 images_row.append(np.asarray(Image.open(tempFilePath)))
         if shift:
@@ -166,9 +133,6 @@ def download_tables(latitude, longitude, shift=True):
                 tempFilePath = os.path.join(tempDirectory, tempFile)
                 im.save(tempFilePath)
 
-=======
-    print(f"Downloaded tiles to folder {tempDirectory}")
->>>>>>> 64b59c0f24fa247beffc885754ab41eae479c528
     return tempDirectory
 
 
