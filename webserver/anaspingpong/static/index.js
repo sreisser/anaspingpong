@@ -2,6 +2,8 @@ var map;
 
 var data_xml = '/data'
 var pin_file = 'static/images/marker.png'
+var pin_ref_file = 'static/images/ref_marker.png'
+var ref_xml = 'static/reference_tables.xml'
 var newLat = 52.4907
 var newLng = 13.4726
 var zoom = 18;
@@ -65,7 +67,7 @@ function GetMap() {
         });
 
       //  var center = map.getCenter();
-
+       showReferenceTables(map);
        getPositions(map)
         //Add your post map load code here.
 }
@@ -102,6 +104,27 @@ function fillLocation() {
     document.getElementById('zoom').value = zoom
     document.getElementById('predicting').style.display = 'block'
     document.forms[0].submit()
+}
+
+function showReferenceTables(map) {
+    var jqxhr = $.get(ref_xml, function(data) {
+
+          $(data).find("marker").each(function() {
+            var marker = jQuery(this);
+            var id = marker.attr("id");
+            loc = new Microsoft.Maps.Location(marker.attr('lat'),
+            marker.attr('lng'))
+
+            var point = new Microsoft.Maps.Pushpin(loc, {
+                icon: pin_ref_file,
+                anchor: new Microsoft.Maps.Point(8, 8),
+                text: marker.attr('id')
+            });
+
+            map.entities.push(point);
+
+          });
+    });
 }
 
 function getPositions(map) {
