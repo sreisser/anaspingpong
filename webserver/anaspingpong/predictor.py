@@ -2,7 +2,7 @@ from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
 from detectron2 import model_zoo
 THRESHOLD = .99
-MODEL_WEIGHTS_FILE = '../model/202112170002_faster_rcnn_R_101_FPN_3x/model_final.pth'
+MODEL_WEIGHTS_FILE = '../model/20220203_detectron/model_final.pth'
 YAML = 'COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml'
 
 class Predictor:
