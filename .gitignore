@@ -3,6 +3,11 @@ venv
 *.idea
 *.pem
 
+.vscode
+data/data*
+
+*pth
+
 *.pyc
 *__pycache__/
 
