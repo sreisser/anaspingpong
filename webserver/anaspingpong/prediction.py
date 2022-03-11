@@ -44,8 +44,9 @@ def get_tables(latitude, longitude):
         scores = label_pred['instances'].scores.numpy()
         boxes = label_pred['instances'].pred_boxes.tensor.numpy()
 
-        if len(scores) > 0:
-            shutil.copyfile(tile, os.path.join(dir_predicted, tilename))
+        # store predicted
+        # if len(scores) > 0:
+        #     shutil.copyfile(tile, os.path.join(dir_predicted, tilename))
 
         for i, score in enumerate(scores):
             image_height, _, _ = img.shape
@@ -76,7 +77,7 @@ def get_tables(latitude, longitude):
                 latitudes = np.append(latitudes, lat)
 
     # remove download folder
- #   shutil.rmtree(download_folder)
+    shutil.rmtree(download_folder)
 
 
     print(f'Detected {len(longitudes)} tables')
