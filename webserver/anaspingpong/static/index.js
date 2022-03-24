@@ -60,7 +60,6 @@ function GetMap() {
         setCoordinates()
 
         map = new Microsoft.Maps.Map('#map', {
-            credentials: 'AqIKf2KZC7FjrPGfs2eWrDaw2hEj8H3ul8VNA8M6omMTsQ0k0Jha38F6PVtCnBE5',
             center: new Microsoft.Maps.Location(newLat, newLng),
             mapTypeId: Microsoft.Maps.MapTypeId.aerial,
             zoom: zoom,
